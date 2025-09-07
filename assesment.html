@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep vs. Shallow Copy</title>
+    <title>ECT Assessment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -12,14 +12,23 @@
             background-color: #f3f4f6;
             color: #1f2937;
         }
+
+        ul {
+            list-style: circle !important;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body class="p-12">
-<div class="max-w-4xl mx-auto bg-white p-12 rounded-xl shadow-lg">
+<div class="max-w-6xl mx-auto bg-white p-12 rounded-xl shadow-lg">
     <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Assessment ECT</h1>
     <div class="flex flex-col md:flex-row gap-6">
         <div class="flex-1 bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Approaches:</h2>
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">1. Deep copy function</h2>
             <h3> Method 1 - Define a deepCopy method to change the references of the value</h3>
             <pre><code>
             function deepCopy(obj) {
@@ -65,6 +74,342 @@
                     class="w-full bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors">
                 Modify Deep Copy
             </button>
+        </div>
+    </div>
+    <br>
+    <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex-1 bg-gray-100 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">2. Function to check if two objects are equals</h2>
+            <ul>
+                <li>Split the initial text by semicolon, in an array of strings</li>
+                <li>Parse each string to JSON object</li>
+                <li>Remove null and undefined properties from each object</li>
+                <li>Compare each object with the others using the check function</li>
+            </ul>
+            <pre><code>
+function check(obj1, obj2) {
+    if ((obj1 === null || obj1 === undefined) && (obj2 === null || obj2 === undefined)) {
+        return true;
+    }
+
+    if ((obj1 === null || obj1 === undefined) || (obj2 === null || obj2 === undefined)) {
+        return false;
+    }
+
+    if (typeof obj1 !== 'object' && typeof obj2 !== 'object') {
+        return obj1 === obj2;
+    }
+
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+        return false;
+    }
+
+    if (obj1 instanceof Date && obj2 instanceof Date) {
+        return obj1.getTime() === obj2.getTime();
+    }
+
+    if (obj1 instanceof Date || obj2 instanceof Date) {
+        return false;
+    }
+
+    if (Array.isArray(obj1) && Array.isArray(obj2)) {
+        if (obj1.length !== obj2.length) {
+            return false;
+        }
+        for (let i = 0; i < obj1.length; i++) {
+            if (!check(obj1[i], obj2[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    if (Array.isArray(obj1) || Array.isArray(obj2)) {
+        return false;
+    }
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    const allKeys = [...new Set([...keys1, ...keys2])];
+
+    for (let key of allKeys) {
+        const val1 = obj1.hasOwnProperty(key) ? obj1[key] : undefined;
+        const val2 = obj2.hasOwnProperty(key) ? obj2[key] : undefined;
+
+        if (!check(val1, val2)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+            </code></pre>
+
+        </div>
+        <div class="flex-1 bg-gray-100 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">2. Check function</h2>
+            <div class="mb-4">
+                <p class="font-medium">Initial text:</p>
+                <label for="inputCheckMethodText"></label><textarea rows="5" draggable="true" id="inputCheckMethodText"
+                                                                    class="bg-white p-3 rounded-lg text-sm overflow-auto"></textarea>
+            </div>
+            <div class="mb-4">
+                <p class="font-medium">Result:</p>
+                <pre id="function2CheckResult" class="bg-white p-3 rounded-lg text-sm overflow-auto"></pre>
+            </div>
+            <button id="function2CheckButton"
+                    class="w-full bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors">
+                See result
+            </button>
+        </div>
+    </div>
+    <br>
+    <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex-1 bg-gray-100 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">3. Function to execute provided code</h2>
+            <ul>
+                <li>Split the initial text by semicolon, in an array of strings</li>
+                <li>Parse each string to JSON object</li>
+                <li>Remove null and undefined properties from each object</li>
+                <li>Compare each object with the others using the check function</li>
+            </ul>
+            <pre><code>
+        function execute(code, variables = {}) {
+            const globalVariables = {
+                $math: {
+                    sum: (a, b) => a + b,
+                    mul: (a, b) => a * b
+                },
+                $logger: (...args) => {
+                    const message = args.join(' ');
+                    console.log(...args);
+                    document.getElementById('function3CheckResult').textContent = message;
+                }
+            };
+
+            const allVariables = { ...globalVariables, ...variables };
+            const varNames = Object.keys(allVariables);
+            const varValues = Object.values(allVariables);
+
+            try {
+                const namedFunction = new Function(
+                    ...varNames,
+                    `//# sourceURL=executed-code.js\n${code}`
+                );
+
+                return namedFunction(...varValues);
+            } catch (error) {
+                console.error('Error executing code:', error);
+                throw error;
+            }
+        }
+            </code></pre>
+
+        </div>
+        <div class="flex-1 bg-gray-100 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">3. Execute function</h2>
+            <ul>
+                <li>Define a regex to split the string in two parts, method and variables</li>
+                <li>Call the execute method with the provided results</li>
+                <li>Execute method define the methods math and logger</li>
+                <li>Create the function by Function constructor and the call the function created</li>
+            </ul>
+            <div class="mb-4">
+                <p class="font-medium">Initial text:</p>
+                <label for="inputCheckMethodText3"></label><textarea rows="5" draggable="true"
+                                                                     id="inputCheckMethodText3"
+                                                                     class="bg-white p-3 rounded-lg text-sm overflow-auto"></textarea>
+            </div>
+            <div class="mb-4">
+                <p class="font-medium">Result:</p>
+                <pre id="function3CheckResult" class="bg-white p-3 rounded-lg text-sm overflow-auto"></pre>
+            </div>
+            <button id="function3CheckButton"
+                    class="w-full bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors">
+                See result
+            </button>
+        </div>
+    </div>
+    <br>
+    <div class="flex flex-col md:flex-row gap-12">
+        <div class="flex-1 bg-gray-100 p-12 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">4. Angular sorting pipe</h2>
+            <ul>
+                <li>Define the pipe transform method</li>
+                <li>Cast the criteria to a list of criteria to allow both approaches ( single criteria or a list of
+                    criteria)
+                </li>
+                <li>Sort the provided array</li>
+                <li>Compare each object with the others using the check function</li>
+            </ul>
+            <pre><code>
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'customSort'
+})
+export class CustomSortPipe implements PipeTransform {
+
+  transform(array: any[], sortCriteria: string | string[]): any[] {
+    if (!array || !sortCriteria) {
+      return array;
+    }
+
+    const criteriaArray = Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria];
+
+    return [...array].sort((a, b) => {
+      for (const criteria of criteriaArray) {
+        const isDescending = criteria.startsWith('-');
+        const field = isDescending ? criteria.substring(1) : criteria;
+
+        const valueA = a[field];
+        const valueB = b[field];
+
+        const comparison = this.compareValues(valueA, valueB);
+
+        if (comparison !== 0) {
+          return isDescending ? -comparison : comparison;
+        }
+      }
+      return 0;
+    });
+  }
+                </code></pre>
+            <div>
+                <h2 class="text-xl font-semibold mb-4 text-gray-700"> Define the compare logic</h2>
+            </div>
+
+            <pre><code>
+
+  private compareValues(a: any, b: any): number {
+    if (a == null && b == null) return 0;
+    if (a == null) return -1;
+    if (b == null) return 1;
+
+    if (a instanceof Date && b instanceof Date) {
+      const result = a.getTime() - b.getTime()
+      return result == 0 ? 0 : result < 0 ? -1 : 1;
+    }
+    if (a instanceof Date) return -1;
+    if (b instanceof Date) return 1;
+
+    if (typeof a === 'number' && typeof b === 'number') {
+        const result = a - b;
+        return result == 0 ? 0 : result < 0 ? -1 : 1;
+    }
+
+    if (typeof a === 'boolean' && typeof b === 'boolean') {
+      return a === b ? 0 : a ? 1 : -1;
+    }
+
+    if (Array.isArray(a) && Array.isArray(b)) {
+      const minLength = Math.min(a.length, b.length);
+      for (let i = 0; i < minLength; i++) {
+        const comparison = this.compareValues(a[i], b[i]);
+        if (comparison !== 0) return comparison;
+      }
+        const resultLength = a.length - b.length;
+        return resultLength == 0 ? 0 : resultLength < 0 ? -1 : 1;
+    }
+    if (Array.isArray(a)) return -1;
+    if (Array.isArray(b)) return 1;
+
+    if (typeof a === 'object' && typeof b === 'object') {
+      const aKeys = Object.keys(a).sort();
+      const bKeys = Object.keys(b).sort();
+
+      const keyComparison = this.compareValues(aKeys, bKeys);
+      if (keyComparison !== 0) return keyComparison;
+
+      for (const key of aKeys) {
+        const comparison = this.compareValues(a[key], b[key]);
+        if (comparison !== 0) return comparison;
+      }
+      return 0;
+    }
+
+    const aStr = String(a).toLowerCase();
+    const bStr = String(b).toLowerCase();
+
+    if (aStr < bStr) return -1;
+    if (aStr > bStr) return 1;
+    return 0;
+  }
+}
+            </code></pre>
+
+        </div>
+    </div>
+
+    <br>
+    <div class="flex flex-col md:flex-row gap-12">
+        <div class="flex-1 bg-gray-100 p-12 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">5. Repeater component</h2>
+
+            <pre><code>
+  import {
+  Component,
+  Input,
+  TemplateRef,
+  ContentChild,
+  AfterContentInit,
+} from '@angular/core';
+
+@Component({
+  selector: 'repeater',
+  template: `
+    &lt;ng-container *ngFor="let item of options"&gt;
+      &lt;ng-container
+              *ngTemplateOutlet="contentTemplate; context: { $implicit: item, item: item }">
+      &lt;/ng-container&gt;
+    &lt;/ng-container&gt;
+  `,
+})
+export class RepeaterComponent implements AfterContentInit {
+  @Input() options: any[] = [];
+  @ContentChild(TemplateRef) contentTemplate!: TemplateRef&lt;any&gt;;
+
+  ngAfterContentInit() {
+    console.log(this.options);
+    if (!this.contentTemplate) {
+      console.warn('Repeater component requires template content');
+    }
+  }
+}
+            </code></pre>
+
+            <h1 class=" font-semibold mb-4 text-gray-700">HTML part</h1>
+            <pre><code>
+&lt;ng-container *ngFor="let item of options">
+  &lt;ng-container
+          *ngTemplateOutlet="contentTemplate; context: { $implicit: item, item: item }">
+  &lt;/ng-container>
+&lt;/ng-container>
+            </code></pre>
+            <h1 class=" font-semibold mb-4 text-gray-700">Usage example</h1>
+            <pre><code>
+&lt;repeater [options]="data">
+    &lt;ng-template let-item>
+        &lt;div>{{ item.name }}&lt;/div>
+    &lt;/ng-template>
+&lt;/repeater>
+            </code></pre>
+
+            <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 class="text-lg font-semibold text-blue-800 mb-2">Live Demo</h3>
+                <a
+                        href="https://stackblitz.com/edit/create-nested-angular-components-xajc8ghi?file=src%2Fapp%2Fapp.component.html,src%2Fapp%2Fcomponents%2Frepeater.component.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Working Example on StackBlitz
+                </a>
+                <p class="text-sm text-gray-600 mt-2">Click to view the live implementation of the repeater component</p>
+            </div>
+
         </div>
     </div>
 
@@ -123,6 +468,171 @@
             deepCopyObject.hobbies.push('coding');
             renderObjects(originalObject, deepCopyObject);
         });
+
+        function check(obj1, obj2) {
+            if ((obj1 === null || obj1 === undefined) && (obj2 === null || obj2 === undefined)) {
+                return true;
+            }
+
+            if ((obj1 === null || obj1 === undefined) || (obj2 === null || obj2 === undefined)) {
+                return false;
+            }
+
+            if (typeof obj1 !== 'object' && typeof obj2 !== 'object') {
+                return obj1 === obj2;
+            }
+
+            if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+                return false;
+            }
+
+            if (obj1 instanceof Date && obj2 instanceof Date) {
+                return obj1.getTime() === obj2.getTime();
+            }
+
+            if (obj1 instanceof Date || obj2 instanceof Date) {
+                return false;
+            }
+
+            if (Array.isArray(obj1) && Array.isArray(obj2)) {
+                if (obj1.length !== obj2.length) {
+                    return false;
+                }
+                for (let i = 0; i < obj1.length; i++) {
+                    if (!check(obj1[i], obj2[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            if (Array.isArray(obj1) || Array.isArray(obj2)) {
+                return false;
+            }
+
+            const keys1 = Object.keys(obj1);
+            const keys2 = Object.keys(obj2);
+            const allKeys = [...new Set([...keys1, ...keys2])];
+
+            for (let key of allKeys) {
+                const val1 = obj1.hasOwnProperty(key) ? obj1[key] : undefined;
+                const val2 = obj2.hasOwnProperty(key) ? obj2[key] : undefined;
+
+                if (!check(val1, val2)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function removeNullUndefinedProps(obj) {
+            if (obj === null || obj === undefined || typeof obj !== 'object') {
+                return obj;
+            }
+
+            if (Array.isArray(obj)) {
+                return obj.map(item => removeNullUndefinedProps(item));
+            }
+
+            if (obj instanceof Date) {
+                return obj;
+            }
+
+            const cleaned = {};
+            for (let key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key];
+                    if (value !== null && value !== undefined) {
+                        cleaned[key] = removeNullUndefinedProps(value);
+                    }
+                }
+            }
+            return cleaned;
+        }
+
+        function sanitizeJsonString(str) {
+            return str.replace(/(\w+):/g, '"$1":').replace(/'/g, '"');
+        }
+
+        document.getElementById('function2CheckButton').addEventListener('click', () => {
+            const textarea = document.getElementById('inputCheckMethodText').value;
+            let results = [];
+            try {
+                const jsonStrings = textarea.split(';').map(str => str.trim()).filter(str => str.length > 0);
+
+                const objects = jsonStrings.map(jsonStr => JSON.parse(sanitizeJsonString(jsonStr)));
+                const cleanedObjects = objects.map(obj => removeNullUndefinedProps(obj));
+
+                for (let i = 0; i < cleanedObjects.length; i++) {
+                    for (let j = i + 1; j < cleanedObjects.length; j++) {
+                        const result = check(cleanedObjects[i], cleanedObjects[j]);
+                        results.push(`Object ${i + 1} vs Object ${j + 1}: ${result}`);
+                    }
+                }
+            } catch (e) {
+                results = ['Error parsing JSON. Please ensure the input is valid JSON.' + e.message];
+            }
+            document.getElementById('function2CheckResult').textContent = results.join('\n');
+
+        });
+
+        document.getElementById('inputCheckMethodText').textContent = '{ a: 17, b: { c: \'Test\', d: null } };\n' +
+            '{ a: 17, b: { c: \'Test\' } };\n' +
+            '{ a: 17, b: null };';
+
+
+        function execute(code, variables = {}) {
+            const globalVariables = {
+                $math: {
+                    sum: (a, b) => a + b,
+                    mul: (a, b) => a * b
+                },
+                $logger: (...args) => {
+                    const message = args.join(' ');
+                    console.log(...args);
+                    document.getElementById('function3CheckResult').textContent = message;
+                }
+            };
+
+            const allVariables = {...globalVariables, ...variables};
+            const varNames = Object.keys(allVariables);
+            const varValues = Object.values(allVariables);
+
+            try {
+                const namedFunction = new Function(
+                    ...varNames,
+                    `//# sourceURL=executed-code.js\n${code}`
+                );
+
+                return namedFunction(...varValues);
+            } catch (error) {
+                console.error('Error executing code:', error);
+                throw error;
+            }
+        }
+
+        document.getElementById('inputCheckMethodText3').textContent = '\'$logger("Sum:", $math.sum(a, b))\', { a: 17, b: 3 }';
+
+        document.getElementById('function3CheckButton').addEventListener('click', () => {
+            const textarea = document.getElementById('inputCheckMethodText3').value;
+            let result = '';
+            try {
+                const match = textarea.match(/^'([^']+)',\s*(.+)$/);
+                if (!match) {
+                    throw new Error('Invalid format. Expected: \'code\', { variables }');
+                }
+
+                const code = match[1];
+                const variablesStr = match[2];
+
+                const variables = JSON.parse(sanitizeJsonString(variablesStr));
+
+                execute(code, variables);
+            } catch (e) {
+                console.log('Error executing code: ' + e.message);
+            }
+        })
     });
 </script>
 </body>
